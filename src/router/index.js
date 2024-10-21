@@ -27,6 +27,7 @@ const routes = [
     name: 'LoginPage',
     component: () => import('@/components/LoginPage.vue'),
   },
+  
 ];
 
 const router = createRouter({

@@ -6,7 +6,7 @@
     </div>
 
     <!-- 음식 종류 선택 -->
-    <h2>음식 종류 선택</h2>
+    <h2>맛집 종류 선택</h2>
     <div class="food-categories">
       <!-- 한식 -->
       <div class="food-category">
