@@ -51,17 +51,7 @@
       </div>
 
       <div class="filter-buttons">
-        <button class="recommend-button" @click="getFoodRecommendations">추천받기</button>
-      </div>
-    </div>
-
-    <div class="recommendation-section" v-if="recommendedFoods.length">
-      <h2>오늘의 추천 음식</h2>
-      <div class="recommended-foods">
-        <div v-for="food in recommendedFoods" :key="food.음식" class="food-item">
-          <img :src="food['이미지 URL']" :alt="food.음식" class="food-image" />
-          <p>{{ food.음식 }} - {{ food.가격대 }}원</p>
-        </div>
+        <button class="recommend-button" @click="goToRecommandPage">추천받기</button>
       </div>
     </div>
   </div>
@@ -78,19 +68,22 @@ export default {
         price: '',
         cooking_type: '',
         spiciness: ''
-      },
-      recommendedFoods: []
+      }
     };
   },
   methods: {
-    async getFoodRecommendations() {
+    async goToRecommandPage() {
       try {
-        console.log('필터로 요청 보내기:', JSON.parse(JSON.stringify(this.filters)));
         const response = await axios.post('http://localhost:5001/api/recommend-foods', this.filters);
-        console.log('받은 음식 추천:', response.data);
-        this.recommendedFoods = response.data.slice(0, 3); // 최대 3개의 추천 음식만 표시
+        const recommendedFoods = response.data;
+
+        // Redirect to RecommandPage.vue and pass the recommended food data as query parameters
+        this.$router.push({
+          name: 'RecommandPage',
+          query: { foods: JSON.stringify(recommendedFoods) }
+        });
       } catch (error) {
-        console.error('음식 추천 중 오류 발생:', error);
+        console.error('Error during recommendation:', error);
       }
     }
   }
@@ -148,15 +141,5 @@ button:hover {
 .recommend-button {
   background-color: #4fc3f7;
   color: white;
-}
-
-.recommendation-section {
-  margin-top: 20px;
-}
-
-.recommendation-section img {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
 }
 </style>

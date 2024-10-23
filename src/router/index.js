@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import MainPage from '@/components/MainPage.vue';
+import RecommandPage from '@/components/RecommandPage.vue'; // Import the RecommandPage
 
 const routes = [
   {
@@ -27,7 +28,11 @@ const routes = [
     name: 'LoginPage',
     component: () => import('@/components/LoginPage.vue'),
   },
-  
+  {
+    path: '/recommand',  // RecommandPage route
+    name: 'RecommandPage',
+    component: RecommandPage,
+  },
 ];
 
 const router = createRouter({
