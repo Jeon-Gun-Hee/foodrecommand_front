@@ -9,6 +9,7 @@
     <div class="filter-section">
       <h3>필터 선택</h3>
       
+      <!-- 음식 종류 필터 -->
       <div class="filter-group">
         <label for="category">음식 종류:</label>
         <select v-model="filters.category" id="category" name="category">
@@ -21,6 +22,7 @@
         </select>
       </div>
 
+      <!-- 가격대 필터 -->
       <div class="filter-group">
         <label for="price">가격대:</label>
         <select v-model="filters.price" id="price" name="price">
@@ -31,6 +33,7 @@
         </select>
       </div>
 
+      <!-- 조리 유형 필터 -->
       <div class="filter-group">
         <label for="cooking_type">조리 유형:</label>
         <select v-model="filters.cooking_type" id="cooking_type" name="cooking_type">
@@ -41,6 +44,7 @@
         </select>
       </div>
 
+      <!-- 맵기 필터 -->
       <div class="filter-group">
         <label for="spiciness">맵기:</label>
         <select v-model="filters.spiciness" id="spiciness" name="spiciness">
@@ -51,7 +55,7 @@
       </div>
 
       <div class="filter-buttons">
-        <button class="recommend-button" @click="goToRecommandPage">추천받기</button>
+        <button class="recommend-button" @click="getFoodRecommendations">추천받기</button>
       </div>
     </div>
   </div>
@@ -72,18 +76,18 @@ export default {
     };
   },
   methods: {
-    async goToRecommandPage() {
+    async getFoodRecommendations() {
       try {
+        console.log('필터로 요청 보내기:', JSON.parse(JSON.stringify(this.filters)));
         const response = await axios.post('http://localhost:5001/api/recommend-foods', this.filters);
-        const recommendedFoods = response.data;
-
-        // Redirect to RecommandPage.vue and pass the recommended food data as query parameters
+        const recommendedFoods = response.data.slice(0, 3); // 최대 3개의 추천 음식만 가져옴
+        // RecommandPage로 음식 데이터 전달
         this.$router.push({
           name: 'RecommandPage',
           query: { foods: JSON.stringify(recommendedFoods) }
         });
       } catch (error) {
-        console.error('Error during recommendation:', error);
+        console.error('음식 추천 중 오류 발생:', error);
       }
     }
   }

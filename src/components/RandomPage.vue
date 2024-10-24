@@ -1,21 +1,40 @@
 <template>
-    <div class="random-page">
-      <div class="image-banner">
-        <img src="@/assets/banner.jpg" alt="음식 배너" class="banner-image" />
-      </div>
-      <h2>랜덤으로 음식을 추천해드려요!</h2>
-      <div class="random-recommend-section">
-        <img src="@/assets/cloche.jpg" alt="음식 추천" class="cloche-image" />
-        <button class="random-button">랜덤추천받기</button>
-      </div>
+  <div class="random-page">
+    <div class="image-banner">
+      <img src="@/assets/banner.jpg" alt="음식 배너" class="banner-image" />
     </div>
-  </template>
-  
-  <script>
-  export default {
-    name: "RandomPage",
-  };
-  </script>
+    <h2>랜덤으로 음식을 추천해드려요!</h2>
+    <div class="random-recommend-section">
+      <img src="@/assets/cloche.jpg" alt="음식 추천" class="cloche-image" />
+      <button class="random-button" @click="getRandomRecommendation">랜덤추천받기</button>
+    </div>
+  </div>
+</template>
+
+<script>
+import axios from 'axios';
+
+export default {
+  name: "RandomPage",
+  methods: {
+    async getRandomRecommendation() {
+      try {
+        // 서버에 랜덤 음식 추천 요청 보내기
+        const response = await axios.get('http://localhost:5001/api/random-food');
+        const randomFood = response.data;
+
+        // 추천된 음식을 recommandpage로 전달
+        this.$router.push({
+          name: 'RecommandPage',
+          query: { food: JSON.stringify(randomFood) }
+        });
+      } catch (error) {
+        console.error('랜덤 음식 추천 중 오류 발생:', error);
+      }
+    }
+  }
+};
+</script>
   
   <style scoped>
   .random-page {

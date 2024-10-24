@@ -22,8 +22,14 @@ export default {
   },
   created() {
     const foodsQuery = this.$route.query.foods;
+    const foodQuery = this.$route.query.food;
+
     if (foodsQuery) {
+      // 메인페이지에서 추천된 음식들
       this.recommendedFoods = JSON.parse(foodsQuery);
+    } else if (foodQuery) {
+      // 랜덤페이지에서 추천된 단일 음식
+      this.recommendedFoods = [JSON.parse(foodQuery)];
     }
   }
 };
