@@ -41,11 +41,12 @@
             <p>주소: {{ place.vicinity }}</p>
             <p>평점: {{ place.rating || '평점 없음' }} ⭐</p>
           </div>
+          <!-- 찜하기 버튼 -->
           <button
             class="favorite-button"
-            @click.stop="toggleFavorite(place.place_id)"
+            @click.stop="addFavorite(place)"
           >
-            {{ favorites.has(place.place_id) ? '❤️' : '🤍' }}
+            찜하기
           </button>
         </div>
       </div>
@@ -54,21 +55,27 @@
 </template>
 
 <script>
-/* eslint-disable no-undef */
+/* eslint-disable */
+import axios from 'axios';
+
 export default {
+  computed: {
+    userProfile() {
+      return this.$store.state.userProfile;
+    }
+  },
   data() {
     return {
       foodName: this.$route.query.food || "맛집",
       places: [],
-      favorites: new Set(),
       map: null,
       markers: {},
       infoWindow: null,
       userLocation: null,
-      initialLocation: null, // 초기 위치 저장
+      initialLocation: null,
       showLocationModal: false,
       newLocation: "",
-      userMarker: null
+      userMarker: null,
     };
   },
   mounted() {
@@ -79,6 +86,47 @@ export default {
     });
   },
   methods: {
+    async addFavorite(place) {
+  if (!this.userProfile) {
+    alert("로그인이 필요합니다."); // 로그인 필요 알림
+    return;
+  }
+
+  try {
+    const userEmail = this.userProfile.email;
+
+    // 서버에 이미 찜한 음식점인지 확인 요청
+    const checkResponse = await axios.post('http://localhost:5001/api/check-favorite', {
+      email: userEmail,
+      restaurant: {
+        name: place.name,
+        address: place.vicinity
+      }
+    });
+
+    if (checkResponse.data.exists) {
+      // 이미 찜한 음식점인 경우 알림 표시 후 함수 종료
+      alert("이미 찜한 식당입니다.");
+      return;
+    }
+
+    // 새로운 찜 추가 요청
+    const response = await axios.post('http://localhost:5001/api/add-favorite', {
+      email: userEmail,
+      restaurant: {
+        name: place.name,
+        address: place.vicinity
+      }
+    });
+
+    console.log("서버 응답:", response.data); // 응답 확인
+    alert(`${place.name}이(가) 찜 목록에 추가되었습니다.`); // 성공 알림
+  } catch (error) {
+    console.error('찜 목록 추가 오류:', error);
+    alert('찜 목록에 추가하는 중 오류가 발생했습니다.');
+  }
+    },
+
     loadGoogleMapScript() {
       return new Promise((resolve, reject) => {
         if (window.google && window.google.maps) {
@@ -93,6 +141,7 @@ export default {
         }
       });
     },
+
     getInitialLocation() {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -100,7 +149,7 @@ export default {
             lat: position.coords.latitude,
             lng: position.coords.longitude
           };
-          this.userLocation = this.initialLocation; // 초기 위치를 사용자 위치로 설정
+          this.userLocation = this.initialLocation;
           this.initializeMap(this.userLocation);
         },
         () => {
@@ -108,6 +157,7 @@ export default {
         }
       );
     },
+
     initializeMap(location) {
       this.map = new google.maps.Map(document.getElementById("map"), {
         center: location,
@@ -116,6 +166,7 @@ export default {
       this.updateUserMarker(location);
       this.fetchNearbyPlaces();
     },
+
     updateUserMarker(location) {
       if (this.userMarker) {
         this.userMarker.setMap(null);
@@ -129,6 +180,7 @@ export default {
         }
       });
     },
+
     moveToInitialLocation() {
       if (this.initialLocation) {
         this.map.panTo(this.initialLocation);
@@ -137,12 +189,15 @@ export default {
         alert("초기 위치 정보를 사용할 수 없습니다.");
       }
     },
+
     openChangeLocationModal() {
       this.showLocationModal = true;
     },
+
     closeChangeLocationModal() {
       this.showLocationModal = false;
     },
+
     async changeLocation() {
       try {
         const geocoder = new google.maps.Geocoder();
@@ -150,10 +205,10 @@ export default {
         if (results.length > 0) {
           const location = results[0].geometry.location;
           const newLocation = { lat: location.lat(), lng: location.lng() };
-          this.updateUserMarker(newLocation); // 새 위치에 빨간 마커 생성
-          this.userLocation = newLocation; // 위치 변경 후 새 위치 설정
+          this.updateUserMarker(newLocation);
+          this.userLocation = newLocation;
           this.map.panTo(newLocation);
-          this.fetchNearbyPlaces(); // 새 위치 기준 음식점 재검색
+          this.fetchNearbyPlaces();
           this.closeChangeLocationModal();
         } else {
           alert("주소를 찾을 수 없습니다.");
@@ -162,6 +217,7 @@ export default {
         console.error("위치 변경 실패:", error);
       }
     },
+
     fetchNearbyPlaces() {
       const service = new google.maps.places.PlacesService(this.map);
       service.nearbySearch(
@@ -193,6 +249,7 @@ export default {
         }
       );
     },
+
     fetchPlaceDetails(placeId, marker) {
       const service = new google.maps.places.PlacesService(this.map);
       service.getDetails({ placeId }, (place, status) => {
@@ -203,10 +260,8 @@ export default {
         }
       });
     },
-    showPlaceDetails(place, marker) {
-      const isFavorite = this.favorites.has(place.place_id);
-      const heartIcon = isFavorite ? "❤️" : "🤍";
 
+    showPlaceDetails(place, marker) {
       const contentString = `
         <div style="max-width: 250px;">
           <h4>${place.name}</h4>
@@ -223,7 +278,6 @@ export default {
               ? `<p><a href="${place.website}" target="_blank">웹사이트 방문</a></p>`
               : ""
           }
-          <button id="favorite-button" style="font-size: 24px; background: none; border: none; cursor: pointer;">${heartIcon}</button>
         </div>
       `;
 
@@ -235,22 +289,8 @@ export default {
         content: contentString
       });
       this.infoWindow.open(this.map, marker);
+    },
 
-      google.maps.event.addListenerOnce(this.infoWindow, 'domready', () => {
-        document.getElementById("favorite-button").addEventListener("click", () => {
-          this.toggleFavorite(place.place_id);
-          this.showPlaceDetails(place, marker);
-        });
-      });
-    },
-    toggleFavorite(placeId) {
-      if (this.favorites.has(placeId)) {
-        this.favorites.delete(placeId);
-      } else {
-        this.favorites.add(placeId);
-      }
-      this.$forceUpdate();
-    },
     focusOnPlace(place) {
       const marker = this.markers[place.place_id];
       if (marker) {
@@ -261,6 +301,8 @@ export default {
   }
 };
 </script>
+
+
 
 <style scoped>
 .restaurant-map-page {

@@ -5,14 +5,17 @@
       <img :src="userProfile.profile_image" alt="프로필 이미지" class="profile-image" />
       <p>{{ userProfile.nickname }}님 안녕하세요!</p>
     </div>
-    <div v-if="favorites.length > 0">
-  <h3>찜한 식당 목록</h3>
-  <ul>
-    <li v-for="restaurant in favorites" :key="restaurant.id">
-      {{ restaurant.name }} - {{ restaurant.address }}
-    </li>
-  </ul>
-</div>
+
+    <div class="favorites-container">
+      <h3>찜한 식당 목록</h3>
+      <div class="favorites-list">
+        <div v-for="restaurant in favoriteRestaurants" :key="restaurant.name" class="favorite-item">
+          <p><strong>이름:</strong> {{ restaurant.name }}</p>
+          <p><strong>주소:</strong> {{ restaurant.address }}</p>
+          <button @click="removeFavorite(restaurant)">찜해제</button>
+        </div>
+      </div>
+    </div>
     <!-- 회원 탈퇴 버튼 -->
     <button @click="confirmDeleteAccount" v-if="userProfile" class="delete-account-btn">회원 탈퇴</button>
 
@@ -37,14 +40,59 @@ import axios from 'axios';
 export default {
   data() {
     return {
+      favoriteRestaurants: [],
       showDeleteModal: false, // 탈퇴 확인 모달 표시 여부
-      favorites: [], // 찜한 식당 목록 저장
+      
     };
   },
   computed: {
     ...mapGetters(['userProfile']),
+    userProfile() {
+      return this.$store.state.userProfile;
   },
+},
+  mounted() {
+    this.checkLoginStatus(); // 로그인 상태 확인
+    this.fetchFavoriteRestaurants();
+  },
+
   methods: {
+    checkLoginStatus() {
+      if (!this.userProfile) {
+        alert("로그인해주십쇼");
+        this.$router.push('/login'); // 로그인 페이지로 이동
+      }
+    },
+    async fetchFavoriteRestaurants() {
+      if (this.userProfile) {
+        try {
+          const response = await axios.post('http://localhost:5001/api/get-favorites', {
+            email: this.userProfile.email,
+          });
+          this.favoriteRestaurants = response.data;
+        } catch (error) {
+          console.error("찜한 식당 목록을 불러오는 중 오류가 발생했습니다:", error);
+        }
+      }
+    },
+    async removeFavorite(restaurant) {
+      try {
+        await axios.post('http://localhost:5001/api/remove-favorite', {
+          email: this.userProfile.email,
+          restaurant: {
+            name: restaurant.name,
+            address: restaurant.address,
+          },
+        });
+        this.favoriteRestaurants = this.favoriteRestaurants.filter(
+          (fav) => fav.name !== restaurant.name
+        );
+        alert(`${restaurant.name}이(가) 찜 목록에서 제거되었습니다.`);
+      } catch (error) {
+        console.error("찜 목록에서 제거하는 중 오류가 발생했습니다:", error);
+      }
+    },
+
     ...mapActions(['logout']),
     confirmDeleteAccount() {
       this.showDeleteModal = true;
@@ -74,15 +122,8 @@ export default {
         this.showDeleteModal = false;
       }
     },
-    async created() {
-  try {
-    const response = await axios.get(`http://localhost:5001/api/get-favorites/${this.userEmail}`);
-    this.favorites = response.data;
-  } catch (error) {
-    console.error(error);
-    alert('찜한 식당 목록을 불러오는 중 오류가 발생했습니다.');
-  }
-},
+    
+
   },
 };
 </script>
@@ -100,6 +141,7 @@ export default {
   border-radius: 50%;
   margin-bottom: 10px;
 }
+
 .delete-account-btn {
   background-color: #f44336;
   color: white;
@@ -146,5 +188,36 @@ export default {
 .no-btn {
   background-color: #f44336;
   color: white;
+}
+
+.favorites-container {
+  margin-top: 20px;
+  text-align: left;
+}
+.favorites-list {
+  display: flex;
+  overflow-x: auto;
+  padding: 10px 0;
+}
+.favorite-item {
+  min-width: 200px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  margin-right: 10px;
+  background-color: #f9f9f9;
+  text-align: center;
+}
+.favorite-item p {
+  margin: 5px 0;
+}
+.favorite-item button {
+  margin-top: 5px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
 }
 </style>
