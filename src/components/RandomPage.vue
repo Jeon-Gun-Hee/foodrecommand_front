@@ -12,27 +12,20 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
-  name: "RandomPage",
   methods: {
     async getRandomRecommendation() {
       try {
-        // 서버에 랜덤 음식 추천 요청 보내기
-        const response = await axios.get('http://localhost:5001/api/random-food');
-        const randomFood = response.data;
+        const response = await fetch('http://localhost:5001/api/random-food');
+        const randomFood = await response.json();
 
-        // 추천된 음식을 recommandpage로 전달
-        this.$router.push({
-          name: 'RecommandPage',
-          query: { food: JSON.stringify(randomFood) }
-        });
+        // RecommandPage2.vue로 랜덤 음식 전달 (query 사용)
+        this.$router.push({ name: 'RecommandPage2', query: { food: JSON.stringify(randomFood) } });
       } catch (error) {
-        console.error('랜덤 음식 추천 중 오류 발생:', error);
+        console.error('랜덤 추천 실패:', error);
       }
-    }
-  }
+    },
+  },
 };
 </script>
   

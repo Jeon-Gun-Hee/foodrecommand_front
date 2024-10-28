@@ -1,80 +1,102 @@
 <template>
   <div class="login-page">
-    <h1>카카오톡 로그인</h1>
-
-    <!-- 로그인 상태에 따라 버튼과 메시지를 변경 -->
-    <div v-if="!isLoggedIn">
-      <button id="kakao-login-btn" @click="kakaoLogin">카카오 로그인</button>
-    </div>
-
-    <div v-else>
-      <p>환영합니다, {{ user.nickname }}님!</p>
-      <button @click="logout">로그아웃</button>
+    <h2>로그인</h2>
+    <button @click="kakaoLogin" class="kakao-login-btn">카카오톡으로 로그인</button>
+    
+    <!-- 회원가입 모달 -->
+    <div v-if="showSignupModal" class="modal-overlay">
+      <div class="modal">
+        <h3>등록되지 않은 회원입니다.</h3>
+        <p>카카오 계정으로 간편 회원가입 하시겠습니까?</p>
+        <div class="modal-buttons">
+          <button @click="confirmSignup" class="yes-btn">예</button>
+          <button @click="cancelSignup" class="no-btn">아니오</button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+import { useStore } from 'vuex';
 
 export default {
+  setup() {
+    const store = useStore();
+    return { store };
+  },
   data() {
     return {
-      isLoggedIn: false, // 로그인 상태
-      user: null, // 로그인된 사용자 정보
+      KAKAO_JS_KEY: 'eb9ca0d8ebadeebe7b5674e70ceb4116',
+      showSignupModal: false,
+      userInfo: null,
     };
   },
   mounted() {
-    this.loadKakaoSDK(); // 카카오 SDK 로드
+    if (!window.Kakao.isInitialized()) {
+      window.Kakao.init(this.KAKAO_JS_KEY);
+    }
   },
   methods: {
-    loadKakaoSDK() {
-      if (!window.Kakao) {
-        const script = document.createElement('script');
-        script.src = 'https://developers.kakao.com/sdk/js/kakao.js';
-        script.onload = () => {
-          window.Kakao.init('eb9ca0d8ebadeebe7b5674e70ceb4116'); // 카카오 JavaScript 키 입력
-        };
-        document.head.appendChild(script);
-      }
-    },
     kakaoLogin() {
       window.Kakao.Auth.login({
-        success: (authObj) => {
-          // 카카오 로그인 성공 시, 백엔드로 access_token 전송
-          this.handleLogin(authObj.access_token);
+        scope: 'profile_nickname, account_email, profile_image',
+        success: async () => {
+          try {
+            const userInfo = await window.Kakao.API.request({
+              url: '/v2/user/me',
+            });
+
+            const email = userInfo.kakao_account.email;
+            const nickname = userInfo.kakao_account.profile.nickname;
+            const profile_image = userInfo.kakao_account.profile.profile_image_url;
+
+            const response = await axios.post('http://localhost:5001/api/login', { email });
+
+            if (response.data.isRegistered) {
+              this.store.dispatch('login', { email, nickname, profile_image });
+              alert('로그인되었습니다.');
+              this.$router.push('/'); // 로그인 후 메인 페이지로 이동
+            } else {
+              this.userInfo = { email, nickname, profile_image };
+              this.showSignupModal = true;
+            }
+          } catch (error) {
+            console.error(error);
+            alert('로그인 중 오류가 발생했습니다.');
+          }
         },
-        fail: (err) => {
-          console.error('카카오 로그인 실패', err);
+        fail: (error) => {
+          console.error(error);
+          alert('카카오 로그인에 실패했습니다.');
         },
       });
     },
-    async handleLogin(accessToken) {
+    async confirmSignup() {
       try {
-        const response = await axios.post('http://localhost:5000/api/kakao-login', {
-          accessToken,
-        });
-
-        if (response.data.isNewUser) {
-          // 신규 사용자일 경우 회원가입 페이지로 이동
-          this.$router.push({ name: 'SignUpPage', params: { user: response.data.user } });
-        } else {
-          // 기존 사용자일 경우 로그인 처리
-          this.user = response.data.user;
-          this.isLoggedIn = true;
-        }
+        await axios.post('http://localhost:5001/api/signup', this.userInfo);
+        this.store.dispatch('login', this.userInfo);
+        alert('회원가입이 완료되었습니다!');
+        this.$router.push('/'); // 회원가입 후 메인 페이지로 이동
       } catch (error) {
-        console.error('로그인 처리 중 오류:', error);
+        console.error(error);
+        alert('회원가입 중 오류가 발생했습니다.');
+      } finally {
+        this.showSignupModal = false;
       }
     },
-    logout() {
-      this.isLoggedIn = false;
-      this.user = null;
-      window.Kakao.Auth.logout();
+    cancelSignup() {
+      this.showSignupModal = false;
     },
   },
 };
 </script>
+
+
+
+
+
 
 <style scoped>
 .login-page {
@@ -82,10 +104,51 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
 }
-
-button {
+.kakao-login-btn {
+  background-color: #FEE500;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  width: 300px;
+}
+.modal-buttons {
+  display: flex;
+  justify-content: space-around;
   margin-top: 20px;
+}
+.yes-btn, .no-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.yes-btn {
+  background-color: #4CAF50;
+  color: white;
+}
+.no-btn {
+  background-color: #f44336;
+  color: white;
 }
 </style>

@@ -41,6 +41,16 @@
           <option value="구이">구이</option>
           <option value="찌개">찌개</option>
           <option value="볶음">볶음</option>
+          <option value="밥류">밥류</option>
+          <option value="찜류">찜류</option>
+          <option value="면류">면류</option>
+          <option value="전/부침">전/부침</option>
+          <option value="탕/국">탕/국</option>
+          <option value="반찬류">반찬류</option>
+          <option value="튀김류">튀김류</option>
+          <option value="해산물">해산물</option>
+          <option value="전골">전골</option>
+          <option value="빵류">빵류</option>
         </select>
       </div>
 

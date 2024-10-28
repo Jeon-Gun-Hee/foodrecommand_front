@@ -7,11 +7,13 @@
       <nav>
         <ul class="navbar">
           <li><router-link to="/">음식추천</router-link></li>
-          <li><router-link to="/random">랜덤추천</router-link></li> <!-- 랜덤 추천 추가 -->
+          <li><router-link to="/random">랜덤추천</router-link></li>
           <li><router-link to="/restaurant">맛집추천</router-link></li>
           <li><router-link to="/mypage">마이페이지</router-link></li>
         </ul>
-        <router-link to="/login" class="login-button">로그인</router-link>
+        <button @click="handleAuthAction" class="auth-button">
+          {{ isLoggedIn ? '로그아웃' : '로그인' }}
+        </button>
       </nav>
     </header>
     <router-view />
@@ -19,10 +21,33 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex';
+
 export default {
   name: 'App',
+  computed: {
+    ...mapGetters(['isLoggedIn']),
+  },
+  methods: {
+    ...mapActions(['logout']),
+    handleAuthAction() {
+      if (this.isLoggedIn) {
+        this.kakaoLogout();
+      } else {
+        this.$router.push('/login');
+      }
+    },
+    kakaoLogout() {
+      const REST_API_KEY = 'd5484d5ec247e475a1779d13c83d9fc0'; // 여기에 실제 REST API 키를 입력하세요.
+      const LOGOUT_REDIRECT_URI = 'http://localhost:8080'; // 실제 로그아웃 리디렉트 URI를 설정하세요.
+
+      // 카카오 계정과 서비스 로그아웃 요청
+      window.location.href = `https://kauth.kakao.com/oauth/logout?client_id=${REST_API_KEY}&logout_redirect_uri=${LOGOUT_REDIRECT_URI}`;
+    },
+  },
 };
 </script>
+
 
 <style>
 
@@ -71,6 +96,14 @@ header {
 }
 
 .login-button {
+  position: absolute;
+  right: 20px;
+  top: 10px;
+  font-size: 18px;
+  color: black;
+}
+
+.auth-button{
   position: absolute;
   right: 20px;
   top: 10px;
