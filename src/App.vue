@@ -2,13 +2,13 @@
   <div id="app">
     <header>
       <router-link to="/" class="title-link">
-        <h1 class="title">Food Choice</h1>
+        <h1 class="title">푸드 초이스</h1>
       </router-link>
       <nav>
         <ul class="navbar">
           <li><router-link to="/">음식추천</router-link></li>
           <li><router-link to="/random">랜덤추천</router-link></li>
-          <li><router-link to="/restaurant">맛집추천</router-link></li>
+          <li><router-link to="/restaurant">식당검색</router-link></li>
           <li><router-link to="/mypage">마이페이지</router-link></li>
         </ul>
         <button @click="handleAuthAction" class="auth-button">
@@ -50,9 +50,24 @@ export default {
 
 
 <style>
+@font-face {
+  font-family: 'BMJUA';
+  src: url('./assets/fonts/BMJUA_ttf.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'BMHANNAPRO';
+  src: url('./assets/fonts/BMHANNAPro.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
 
 #app {
-  font-family: 'Arial', sans-serif;
+
   text-align: center;
   height: 100%;
   width: 100%;
@@ -64,7 +79,8 @@ header {
 }
 
 .title {
-  font-size: 2.5rem;
+  font-family: 'BMHANNAPRO';
+  font-size: 32px;
   font-weight: bold;
   color: #ff9800;
   margin: 10px;
@@ -76,10 +92,12 @@ header {
 }
 
 .navbar {
+  font-family: 'BMJUA';
+  font-size: 20px;
   display: flex;
   justify-content: center;
   gap: 100px;
-  padding: 20px 0;
+  padding: 15px 0;
   background-color: #b2ebf2;
   list-style-type: none;
   margin: 0;
@@ -106,7 +124,7 @@ header {
 .auth-button{
   position: absolute;
   right: 20px;
-  top: 10px;
+  top: 5px;
   font-size: 18px;
   color: black;
 }

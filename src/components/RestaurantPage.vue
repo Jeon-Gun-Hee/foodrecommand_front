@@ -6,7 +6,9 @@
     </div>
     
     <!-- 음식 종류 선택 -->
-    <h2>맛집 종류 선택</h2>
+     <div class="main-text">
+    <h2>음식 종류 선택</h2>
+    </div>
     <div class="food-categories">
       <!-- 상단에 위치할 카테고리 -->
       <div class="category-row">
@@ -74,6 +76,19 @@ export default {
 </script>
 
 <style scoped>
+@font-face {
+    font-family: 'BMHANNAPRO';
+    src: url('../assets/fonts/BMHANNAPro.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  .main-text {
+  font-family: 'BMHANNAPRO';
+  font-size: 20px;
+  font-weight: lighter;
+}
+
 .restaurant-page {
   display: flex;
   flex-direction: column;
@@ -111,6 +126,7 @@ h2 {
 }
 
 .food-category {
+  font-family: 'BMHANNAPRO';
   display: flex;
   flex-direction: column;
   align-items: center;

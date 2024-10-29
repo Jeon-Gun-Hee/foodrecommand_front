@@ -3,7 +3,7 @@
     <div class="image-banner">
       <img src="@/assets/banner.jpg" alt="음식 배너" class="banner-image" />
     </div>
-    <h2>오늘의 추천 음식</h2>
+    <div class="main-text"><h2>오늘의 추천 음식</h2></div>
     <div v-if="recommendedFoods.length > 0" class="recommended-foods">
       <div 
         v-for="food in recommendedFoods" 
@@ -18,7 +18,7 @@
     <div v-else>
       <p>추천할 음식이 없습니다.</p>
     </div>
-    <button @click="goToMainPage">다시 추천받기</button>
+    <button class="rerecommand" @click="goToMainPage">다시 추천받기</button>
   </div>
 </template>
 
@@ -48,6 +48,23 @@ export default {
 </script>
 
 <style scoped>
+@font-face {
+    font-family: 'BMHANNAPRO';
+    src: url('../assets/fonts/BMHANNAPro.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  .rerecommand {
+    font-family: 'BMHANNAPRO';
+  }
+
+  .main-text {
+  font-family: 'BMHANNAPRO';
+  font-size: 20px;
+  font-weight: lighter;
+}
+
 .image-banner {
   width: 100%;
   display: flex;
@@ -65,6 +82,7 @@ export default {
 }
 
 .recommended-foods {
+  font-family:  'BMHANNAPRO';
   display: flex;
   justify-content: center;
   gap: 50px; /* 간격을 50px로 조정 */
@@ -80,6 +98,7 @@ export default {
   width: 100px;
   height: 100px;
   object-fit: cover;
+  border-radius: 10px;
 }
 
 button {

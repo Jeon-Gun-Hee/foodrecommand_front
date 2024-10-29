@@ -1,7 +1,13 @@
 <template>
   <div class="login-page">
-    <h2>로그인</h2>
-    <button @click="kakaoLogin" class="kakao-login-btn">카카오톡으로 로그인</button>
+    <div class="image-banner">
+      <img src="@/assets/banner.jpg" alt="음식 배너" class="banner-image"/>
+    </div>
+    <div class="main-text"><h2>카카오톡 간편로그인으로 시작할 수 있습니다.</h2></div>
+    
+    <div class="login-box">
+      <button @click="kakaoLogin" class="kakao-login-btn">카카오톡 간편 로그인</button>
+    </div>
     
     <!-- 회원가입 모달 -->
     <div v-if="showSignupModal" class="modal-overlay">
@@ -99,6 +105,50 @@ export default {
 
 
 <style scoped>
+@font-face {
+  font-family: 'BMHANNAPRO';
+  src: url('../assets/fonts/BMHANNAPro.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.main-text {
+  font-family: 'BMHANNAPRO';
+  font-size: 15px;
+  font-weight: lighter;
+  margin-top:20px;
+}
+
+.login-box {
+  position: relative;
+  width: 300px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #FFFFFF;
+  border: 3px solid #EF9B13;
+  border-radius: 20px;
+  box-sizing: border-box;
+  margin-top: 20px; /* 상자의 위치를 조정 */
+}
+
+.image-banner {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.banner-image {
+  width: 100%;
+  height: auto;
+}
+
+
+
+
+
+
 .login-page {
   display: flex;
   flex-direction: column;
@@ -106,12 +156,13 @@ export default {
   justify-content: center;
 }
 .kakao-login-btn {
+  
   background-color: #FEE500;
   border: none;
   padding: 10px 20px;
   font-size: 16px;
   cursor: pointer;
-  margin-top: 10px;
+  border-radius: 10px;
 }
 .modal-overlay {
   position: fixed;

@@ -1,6 +1,5 @@
 <template>
   <div class="mypage">
-    <h2>마이페이지</h2>
     <div v-if="userProfile" class="profile">
       <img :src="userProfile.profile_image" alt="프로필 이미지" class="profile-image" />
       <p>{{ userProfile.nickname }}님 안녕하세요!</p>
@@ -59,7 +58,7 @@ export default {
   methods: {
     checkLoginStatus() {
       if (!this.userProfile) {
-        alert("로그인해주십쇼");
+        alert("로그인 후 이용 가능합니다.");
         this.$router.push('/login'); // 로그인 페이지로 이동
       }
     },
@@ -129,13 +128,22 @@ export default {
 </script>
 
 <style scoped>
+@font-face {
+  font-family: 'BMHANNAPRO';
+  src: url('../assets/fonts/BMHANNAPro.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 .mypage {
   text-align: center;
 }
 .profile {
   margin-top: 20px;
+  font-family: 'BMHANNAPRO';
 }
 .profile-image {
+  margin-top:20px;
   width: 100px;
   height: 100px;
   border-radius: 50%;
@@ -191,8 +199,10 @@ export default {
 }
 
 .favorites-container {
+  font-family: 'BMHANNAPRO';
   margin-top: 20px;
   text-align: left;
+  padding: 0px 300px;
 }
 .favorites-list {
   display: flex;
@@ -213,7 +223,7 @@ export default {
 }
 .favorite-item button {
   margin-top: 5px;
-  background-color: #f44336;
+  background-color: #ff9800;
   color: white;
   border: none;
   padding: 5px 10px;

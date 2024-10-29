@@ -1,0 +1,12 @@
+/* src/assets/styles.css 또는 App.vue */
+@font-face {
+    font-family: 'Pacifico';
+    src: url('@/assets/fonts/Pacifico-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+  body {
+    font-family: 'Pacifico', sans-serif;
+  }
+  

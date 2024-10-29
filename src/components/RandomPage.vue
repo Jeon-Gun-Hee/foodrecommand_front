@@ -3,7 +3,8 @@
     <div class="image-banner">
       <img src="@/assets/banner.jpg" alt="음식 배너" class="banner-image" />
     </div>
-    <h2>랜덤으로 음식을 추천해드려요!</h2>
+    <div class="main-text"><h2>랜덤으로 음식을 추천해드려요!</h2></div>
+    
     <div class="random-recommend-section">
       <img src="@/assets/cloche.jpg" alt="음식 추천" class="cloche-image" />
       <button class="random-button" @click="getRandomRecommendation">랜덤추천받기</button>
@@ -30,6 +31,19 @@ export default {
 </script>
   
   <style scoped>
+  @font-face {
+    font-family: 'BMHANNAPRO';
+    src: url('../assets/fonts/BMHANNAPro.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  .main-text {
+  font-family: 'BMHANNAPRO';
+  font-size: 25px;
+  font-weight: lighter;
+}
+
   .random-page {
     display: flex;
     flex-direction: column;
@@ -49,7 +63,7 @@ export default {
   }
   
   h2 {
-    font-size: 2rem;
+    
     font-weight: bold;
     margin: 30px 0;
   }
@@ -61,11 +75,12 @@ export default {
   }
   
   .cloche-image {
-    width: 400px;
-    height: 300px;
+    width: 300px;
+    height: 200px;
   }
   
   .random-button {
+    font-family: 'BMHANNAPRO';
     margin-top: 20px;
     padding: 15px 30px;
     background-color: #ff9800;

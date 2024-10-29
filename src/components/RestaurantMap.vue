@@ -1,6 +1,8 @@
 <template>
   <div class="restaurant-map-page">
-    <h2>{{ foodName }} 맛집 찾기</h2>
+    <div class="main-text">
+      <h2>{{ foodName }} 맛집 찾기</h2>
+    </div>
     <div class="map-container">
       <div id="map" class="map"></div>
 
@@ -305,6 +307,19 @@ export default {
 
 
 <style scoped>
+@font-face {
+    font-family: 'BMHANNAPRO';
+    src: url('../assets/fonts/BMHANNAPro.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  .main-text {
+  font-family: 'BMHANNAPRO';
+  font-size: 17px;
+  font-weight: lighter;
+}
+
 .restaurant-map-page {
   display: flex;
   flex-direction: column;
@@ -315,7 +330,7 @@ export default {
   display: flex;
   width: 100%;
   max-width: 1200px;
-  margin-top: 20px;
+  
   border: 1px solid #ddd;
   border-radius: 8px;
   overflow: hidden;
