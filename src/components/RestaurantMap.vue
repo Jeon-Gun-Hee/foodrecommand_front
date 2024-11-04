@@ -53,6 +53,9 @@
         </div>
       </div>
     </div>
+    <div class="expalin">
+      <h3>찜학 식당 내역은 마이페이지에서 로그인 후 확인하실 수 있습니다.</h3>
+    </div>
   </div>
 </template>
 
@@ -320,6 +323,9 @@ export default {
   font-weight: lighter;
 }
 
+.expalin {
+  font-family: 'BMHANNAPRO';
+}
 .restaurant-map-page {
   display: flex;
   flex-direction: column;

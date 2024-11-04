@@ -18,6 +18,7 @@
     <div v-else>
       <p>추천할 음식이 없습니다.</p>
     </div>
+    <h3 class="rerecommand">추천음식을 먹을 수 있는 주변 식당을 검색하고 싶다면 음식사진을 클릭해주시기 바랍니다.</h3>
     <button class="rerecommand" @click="goToMainPage">다시 추천받기</button>
   </div>
 </template>

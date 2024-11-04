@@ -2,7 +2,7 @@
   <div class="restaurant-page">
     <!-- 상단 배너 이미지 -->
     <div class="image-banner">
-      <img src="@/assets/banner.jpg" alt="음식 배너" class="banner-image" />
+      <img src="@/assets/banner6.png" alt="음식 배너" class="banner-image" />
     </div>
     
     <!-- 음식 종류 선택 -->

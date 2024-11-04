@@ -1,7 +1,7 @@
 <template>
   <div class="recommand-page">
     <div class="image-banner">
-      <img src="@/assets/banner.jpg" alt="음식 배너" class="banner-image" />
+      <img src="@/assets/banner3.png" alt="음식 배너" class="banner-image" />
     </div>
     <div class="main-text">
       <h2>랜덤으로 추천된 음식</h2>
@@ -10,6 +10,7 @@
       <img :src="recommendedFood['이미지 URL']" alt="음식 이미지" class="food-image" />
       <p class="food-name">{{ recommendedFood.음식 }}</p>
       <button @click.stop="getNewRandomRecommendation" class="re-recommend-button">재추천하기</button>
+      <h3 class="re-recommand">추천음식을 먹을 수 있는 주변 식당을 검색하고 싶다면 음식사진을 클릭해주시기 바랍니다.</h3>
     </div>
   </div>
 </template>
@@ -57,6 +58,11 @@ export default {
   font-weight: lighter;
 }
 
+.re-recommand{
+  font-family: 'BMHANNAPRO';
+  margin-top: 50px;
+}
+
 .image-banner {
   width: 100%;
   display: flex;
@@ -73,6 +79,7 @@ export default {
 }
 
 .food-item {
+  font-family: 'BMHANNAPRO';
   display: inline-block;
   text-align: center;
   margin: 10px;

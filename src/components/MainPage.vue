@@ -71,6 +71,15 @@
       <div class="filter-buttons">
         <button class="recommend-button" @click="getFoodRecommendations">추천받기</button>
       </div>
+
+      <!-- 상세설명 -->
+      <div class="explain">
+        <h3>안내사항</h3>
+        <h4>가격대는 1인분을 기준으로 가격을 잡은 것으로 해당음식의 대략적인 평균 가격대입니다.</h4>
+        <h4>추천받은 음식의 가격대는 음식점에서 파는 실제 가격과 다를 수 있습니다.</h4>
+      </div>
+      
+
     </div>
   </div>
 </template>
@@ -123,7 +132,9 @@ export default {
   font-style: normal;
 }
 
-
+.explain {
+  margin-top: 50px;
+}
 
 .main-text {
   font-family: 'BMHANNAPRO';

@@ -1,7 +1,7 @@
 <template>
   <div class="login-page">
     <div class="image-banner">
-      <img src="@/assets/banner.jpg" alt="음식 배너" class="banner-image"/>
+      <img src="@/assets/banner2.png" alt="음식 배너" class="banner-image"/>
     </div>
     <div class="main-text"><h2>카카오톡 간편로그인으로 시작할 수 있습니다.</h2></div>
     

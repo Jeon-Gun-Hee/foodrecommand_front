@@ -1,5 +1,8 @@
 <template>
   <div class="mypage">
+    <div class="image-banner">
+      <img src="@/assets/banner2.png" alt="음식 배너" class="banner-image"/>
+    </div>
     <div v-if="userProfile" class="profile">
       <img :src="userProfile.profile_image" alt="프로필 이미지" class="profile-image" />
       <p>{{ userProfile.nickname }}님 안녕하세요!</p>
@@ -133,6 +136,17 @@ export default {
   src: url('../assets/fonts/BMHANNAPro.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
+}
+
+.image-banner {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.banner-image {
+  width: 100%;
+  height: auto;
 }
 
 .mypage {

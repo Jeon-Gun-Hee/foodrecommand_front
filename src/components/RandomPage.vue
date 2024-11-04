@@ -1,7 +1,7 @@
 <template>
   <div class="random-page">
     <div class="image-banner">
-      <img src="@/assets/banner.jpg" alt="음식 배너" class="banner-image" />
+      <img src="@/assets/banner3.png" alt="음식 배너" class="banner-image" />
     </div>
     <div class="main-text"><h2>랜덤으로 음식을 추천해드려요!</h2></div>
     
