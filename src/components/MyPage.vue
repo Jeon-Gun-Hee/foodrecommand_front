@@ -3,6 +3,10 @@
     <div class="image-banner">
       <img src="@/assets/banner2.png" alt="음식 배너" class="banner-image"/>
     </div>
+
+    <!-- 회원 탈퇴 버튼 -->
+    <button @click="confirmDeleteAccount" v-if="userProfile" class="delete-account-btn">회원 탈퇴</button>
+    
     <div v-if="userProfile" class="profile">
       <img :src="userProfile.profile_image" alt="프로필 이미지" class="profile-image" />
       <p>{{ userProfile.nickname }}님 안녕하세요!</p>
@@ -10,7 +14,11 @@
 
     <div class="favorites-container">
       <h3>찜한 식당 목록</h3>
-      <div class="favorites-list">
+      <!-- 찜한 식당 리스트가 없는 경우 안내 메시지 표시 -->
+      <div class="favorites-list" :class="{ empty: favoriteRestaurants.length === 0 }">
+        <div v-if="favoriteRestaurants.length === 0" class="no-favorites">
+          아직 찜한 식당이 없습니다.
+        </div>
         <div v-for="restaurant in favoriteRestaurants" :key="restaurant.name" class="favorite-item">
           <p><strong>이름:</strong> {{ restaurant.name }}</p>
           <p><strong>주소:</strong> {{ restaurant.address }}</p>
@@ -18,8 +26,6 @@
         </div>
       </div>
     </div>
-    <!-- 회원 탈퇴 버튼 -->
-    <button @click="confirmDeleteAccount" v-if="userProfile" class="delete-account-btn">회원 탈퇴</button>
 
     <!-- 탈퇴 확인 모달 -->
     <div v-if="showDeleteModal" class="modal-overlay">
@@ -35,6 +41,7 @@
   </div>
 </template>
 
+
 <script>
 import { mapGetters, mapActions } from 'vuex';
 import axios from 'axios';
@@ -43,26 +50,24 @@ export default {
   data() {
     return {
       favoriteRestaurants: [],
-      showDeleteModal: false, // 탈퇴 확인 모달 표시 여부
-      
+      showDeleteModal: false,
     };
   },
   computed: {
     ...mapGetters(['userProfile']),
     userProfile() {
       return this.$store.state.userProfile;
+    },
   },
-},
   mounted() {
-    this.checkLoginStatus(); // 로그인 상태 확인
+    this.checkLoginStatus();
     this.fetchFavoriteRestaurants();
   },
-
   methods: {
     checkLoginStatus() {
       if (!this.userProfile) {
         alert("로그인 후 이용 가능합니다.");
-        this.$router.push('/login'); // 로그인 페이지로 이동
+        this.$router.push('/login');
       }
     },
     async fetchFavoriteRestaurants() {
@@ -104,18 +109,15 @@ export default {
     },
     async deleteAccount() {
       try {
-        // 데이터베이스에서 사용자 삭제
         await axios.delete('http://localhost:5001/api/delete-account', {
           data: { email: this.userProfile.email },
         });
         
-        // 카카오 계정과 웹 서비스에서 로그아웃 요청
-        const REST_API_KEY = 'd5484d5ec247e475a1779d13c83d9fc0'; // 본인의 REST API 키로 변경
-        const LOGOUT_REDIRECT_URI = 'http://localhost:8080'; // 실제 로그아웃 리디렉트 URI 설정
-        this.logout(); // 웹 서비스 로그아웃 처리
+        const REST_API_KEY = 'd5484d5ec247e475a1779d13c83d9fc0';
+        const LOGOUT_REDIRECT_URI = 'http://localhost:8080';
+        this.logout();
         alert('회원 탈퇴가 완료되었습니다.');
 
-        // 카카오 로그아웃 페이지로 리디렉트
         window.location.href = `https://kauth.kakao.com/oauth/logout?client_id=${REST_API_KEY}&logout_redirect_uri=${LOGOUT_REDIRECT_URI}`;
       } catch (error) {
         console.error(error);
@@ -124,8 +126,6 @@ export default {
         this.showDeleteModal = false;
       }
     },
-    
-
   },
 };
 </script>
@@ -151,13 +151,15 @@ export default {
 
 .mypage {
   text-align: center;
+  position: relative;
 }
+
 .profile {
   margin-top: 20px;
   font-family: 'BMHANNAPRO';
 }
 .profile-image {
-  margin-top:20px;
+  margin-top: 20px;
   width: 100px;
   height: 100px;
   border-radius: 50%;
@@ -165,14 +167,18 @@ export default {
 }
 
 .delete-account-btn {
+  position: absolute;
+  right: 20px;
+  margin-top: 10px;
   background-color: #f44336;
   color: white;
   padding: 10px 20px;
   border: none;
   cursor: pointer;
-  margin-top: 20px;
   border-radius: 5px;
+  font-size: 14px;
 }
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -219,16 +225,31 @@ export default {
   padding: 0px 300px;
 }
 .favorites-list {
-  display: flex;
-  overflow-x: auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
   padding: 10px 0;
+  min-height: 120px; /* 리스트가 없을 때도 공간이 차지되도록 설정 */
+  background-color: #f0f4f8; /* 배경색 추가 */
+  border: 1px solid #ddd;
+  border-radius: 8px;
 }
+
+.favorites-list.empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.no-favorites {
+  color: #888;
+  font-size: 16px;
+}
+
 .favorite-item {
-  min-width: 200px;
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 10px;
-  margin-right: 10px;
   background-color: #f9f9f9;
   text-align: center;
 }

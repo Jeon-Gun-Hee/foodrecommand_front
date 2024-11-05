@@ -75,11 +75,9 @@
       <!-- 상세설명 -->
       <div class="explain">
         <h3>안내사항</h3>
-        <h4>가격대는 1인분을 기준으로 가격을 잡은 것으로 해당음식의 대략적인 평균 가격대입니다.</h4>
+        <h4>가격대는 1인분 기준 가격대로 해당 음식의 대략적인 평균 가격대입니다.</h4>
         <h4>추천받은 음식의 가격대는 음식점에서 파는 실제 가격과 다를 수 있습니다.</h4>
       </div>
-      
-
     </div>
   </div>
 </template>
@@ -103,14 +101,25 @@ export default {
       try {
         console.log('필터로 요청 보내기:', JSON.parse(JSON.stringify(this.filters)));
         const response = await axios.post('http://localhost:5001/api/recommend-foods', this.filters);
-        const recommendedFoods = response.data.slice(0, 3); // 최대 3개의 추천 음식만 가져옴
-        // RecommandPage로 음식 데이터 전달
-        this.$router.push({
-          name: 'RecommandPage',
-          query: { foods: JSON.stringify(recommendedFoods) }
-        });
+        
+        if (response.data && response.data.length > 0) {
+          const recommendedFoods = response.data.slice(0, 3); // 최대 3개의 추천 음식만 가져옴
+          // RecommandPage로 음식 데이터 전달
+          this.$router.push({
+            name: 'RecommandPage',
+            query: { foods: JSON.stringify(recommendedFoods) }
+          });
+        } else {
+          // 추천할 음식이 없을 경우 알림 표시
+          alert('필터에 해당하는 음식이 없습니다.');
+        }
       } catch (error) {
-        console.error('음식 추천 중 오류 발생:', error);
+        if (error.response && error.response.status === 404) {
+          alert('필터에 해당하는 음식이 없습니다.');
+        } else {
+          console.error('음식 추천 중 오류 발생:', error);
+          alert('음식 추천 중 오류가 발생했습니다.');
+        }
       }
     }
   }
@@ -159,7 +168,6 @@ export default {
   flex-direction: column;
   align-items: center;
   margin-top: 40px;
-  
 }
 
 .filter-groups {
@@ -208,6 +216,5 @@ button:hover {
   background-color: #4fc3f7;
   color: white;
   border-radius: 5px;
-  
 }
 </style>
